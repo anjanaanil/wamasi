@@ -11,7 +11,7 @@ char const * HTTPSERVER = "things.ubidots.com";
 Ubidots ubidots(UBIDOTS_TOKEN, UBI_HTTP);
 const int trigP = 2;  //D4 Or GPIO-2 of nodemcu
 const int echoP = 0;  //D3 Or GPIO-0 of nodemcu
-
+float cost;
 long duration;
 int distance;
 
@@ -21,7 +21,7 @@ float flowRate;
 unsigned int flowMilliLitres;
 unsigned long totalMilliLitres;
 float totalLitres;
-
+float charge;
 unsigned long oldTime;
 
 void ICACHE_RAM_ATTR pulseCounter()
@@ -30,7 +30,7 @@ void ICACHE_RAM_ATTR pulseCounter()
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   ubidots.wifiConnect(WIFI_SSID, WIFI_PASS);
   pinMode(trigP, OUTPUT);  // Sets the trigPin as an Output
   pinMode(echoP, INPUT);   // Sets the echoPin as an Input
@@ -87,7 +87,12 @@ void loop() {
   float dist =distance;
   ubidots.add("distance", dist);
   float flow= totalLitres;
-  ubidots.add("Total litres",totalLitres);
+  ubidots.add("Total litres",flow);
+  charge=7.5;
+  cost=charge*totalLitres;
+  ubidots.add("cost",cost);
+  float rate=flowRate;
+  ubidots.add("flow rate",rate);
   bool bufferSent = false;
   bufferSent = ubidots.send();  // Will send data to a device label that matches the device Id
 
